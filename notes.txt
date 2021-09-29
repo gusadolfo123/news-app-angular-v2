@@ -1,5 +1,4 @@
 
-
 ng add @angular/material
 
 ng g c layout
@@ -16,3 +15,5 @@ ng g c employee/components/employee-list
 
 ng g m core
 ng g s core/services/employee
+
+ng g m material/material
