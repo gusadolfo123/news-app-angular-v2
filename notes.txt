@@ -1,0 +1,18 @@
+
+
+ng add @angular/material
+
+ng g c layout
+
+ng g m shared
+ng g c shared/components/header
+ng g c shared/components/footer
+
+ng g m employee
+ng g m employee-routing
+
+ng g c employee/components/employee
+ng g c employee/components/employee-list
+
+ng g m core
+ng g s core/services/employee
