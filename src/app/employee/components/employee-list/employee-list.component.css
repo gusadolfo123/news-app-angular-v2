@@ -1,0 +1,12 @@
+table {
+  width: 100%;
+}
+
+.example-button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-create {
+  margin: 8px;
+}

@@ -1,0 +1,33 @@
+<div class="form-container">
+  <form [formGroup]="form" class="form" (ngSubmit)="onSubmit($event)">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input type="text" formControlName="name" matInput placeholder="Nombre" />
+      <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Posicion</mat-label>
+      <input
+        type="text"
+        formControlName="position"
+        matInput
+        placeholder="Posicion"
+      />
+      <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Salario</mat-label>
+      <input
+        type="number"
+        formControlName="salary"
+        matInput
+        placeholder="Salario"
+      />
+      <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button color="warn">{{ action }}</button>
+  </form>
+</div>
