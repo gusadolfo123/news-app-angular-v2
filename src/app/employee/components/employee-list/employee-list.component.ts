@@ -2,6 +2,10 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { TypeForm } from 'src/app/core/Enums/typeForm.enum';
 import { Employee } from 'src/app/core/models/employee.model';
 import { EmployeeService } from 'src/app/core/services/employee.service';
 import { FormEmployeeComponent } from '../form-employee/form-employee.component';
@@ -26,35 +30,83 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    this.getEmployees();
+  }
+
+  getEmployees() {
     this.employeeService.getEmployees().subscribe((data) => {
       this.dataSource.data = data;
     });
+  }
+
+  updateEmployee(employee: Employee) {
+    const config = new MatDialogConfig();
+    config.disableClose = true;
+    config.data = {
+      type: TypeForm.MODIFY,
+      employee,
+    };
+
+    const dialogRef = this.dialog.open(FormEmployeeComponent, config);
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        switchMap((data) => {
+          return this.employeeService.getEmployees();
+        })
+      )
+      .subscribe((data) => {
+        this.dataSource.data = data;
+      });
   }
 
   createEmployee() {
     const config = new MatDialogConfig();
     config.disableClose = true;
     config.data = {
-      action: 'Crear',
+      type: TypeForm.CREATE,
     };
 
     const dialogRef = this.dialog.open(FormEmployeeComponent, config);
 
-    dialogRef.afterClosed().subscribe((data) => {
-      var employee: Employee = {
-        id: 0,
-        state: 0,
-        address: {
-          street: '',
-          number: '',
-          postalCode: 0,
-        },
-        ...data,
-      };
-
-      this.employeeService.createEmployee(employee).subscribe((res) => {
-        this.dataSource.connect().next([...this.dataSource.data, res]);
+    dialogRef
+      .afterClosed()
+      .pipe(
+        switchMap((data) => {
+          // if (data) {
+          // this.router.navigate(['./employees']);
+          return this.employeeService.getEmployees();
+          // }
+        })
+      )
+      .subscribe((data) => {
+        this.dataSource.data = data;
+        // console.log(data);
+        // if (Object.) {
+        //   var employee: Employee = {
+        //     id: 0,
+        //     state: 0,
+        //     address: {
+        //       street: '',
+        //       number: '',
+        //       postalCode: 0,
+        //     },
+        //     ...data,
+        //   };
+        //   this.employeeService.createEmployee(employee).subscribe((res) => {
+        //     this.dataSource.connect().next([...this.dataSource.data, res]);
+        //   });
+        // }
       });
-    });
+  }
+
+  deleteEmployee(id: number) {
+    let res = confirm('Realmente desea eliminar el registro?');
+    if (res) {
+      this.employeeService
+        .deleteEmployee(id)
+        .subscribe((res) => this.getEmployees());
+    }
   }
 }

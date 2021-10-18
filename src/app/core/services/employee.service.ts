@@ -23,6 +23,16 @@ export class EmployeeService {
       .pipe(catchError(this.handleError));
   }
 
+  updateEmployee(employee: Partial<Employee>) {
+    return this.httpClient
+      .put(environment.URL_API + 'Employee', employee)
+      .pipe(catchError(this.handleError));
+  }
+
+  deleteEmployee(id: number) {
+    return this.httpClient.delete(environment.URL_API + `Employee/${id}`);
+  }
+
   handleError(error: HttpErrorResponse) {
     console.log(error.message);
     return throwError('error durante el llamado al API');

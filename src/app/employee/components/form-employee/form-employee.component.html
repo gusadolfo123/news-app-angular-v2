@@ -1,9 +1,18 @@
 <div class="form-container">
-  <form [formGroup]="form" class="form" (ngSubmit)="onSubmit($event)">
+  <mat-toolbar>
+    <span>Nuevo Empleado</span>
+    <span class="example-spacer"></span>
+    <mat-icon (click)="onClose(null)">close</mat-icon>
+  </mat-toolbar>
+
+  <form [formGroup]="form" class="form" (ngSubmit)="onSubmit()">
     <mat-form-field appearance="outline">
       <mat-label>Nombre</mat-label>
       <input type="text" formControlName="name" matInput placeholder="Nombre" />
       <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+      <mat-error *ngIf="getError('name')">{{
+        getErrorMessage("name")
+      }}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -15,6 +24,9 @@
         placeholder="Posicion"
       />
       <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+      <mat-error *ngIf="getError('position')">{{
+        getErrorMessage("position")
+      }}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -26,8 +38,11 @@
         placeholder="Salario"
       />
       <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+      <mat-error *ngIf="getError('salary')">{{
+        getErrorMessage("salary")
+      }}</mat-error>
     </mat-form-field>
 
-    <button type="submit" mat-raised-button color="warn">{{ action }}</button>
+    <button type="submit" mat-raised-button color="warn">{{ type }}</button>
   </form>
 </div>

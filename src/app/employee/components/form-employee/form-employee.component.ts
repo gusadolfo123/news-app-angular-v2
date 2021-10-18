@@ -1,6 +1,15 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { tap } from 'rxjs/operators';
+import { TypeForm } from 'src/app/core/Enums/typeForm.enum';
+import { Employee } from 'src/app/core/models/employee.model';
+import { EmployeeService } from 'src/app/core/services/employee.service';
 
 @Component({
   selector: 'app-form-employee',
@@ -8,15 +17,18 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./form-employee.component.css'],
 })
 export class FormEmployeeComponent implements OnInit {
-  action: string;
+  type: TypeForm;
   form: FormGroup;
+  employee: Employee;
 
   constructor(
-    private dialogRef: MatDialogRef<FormEmployeeComponent>,
     @Inject(MAT_DIALOG_DATA) data: any,
-    private formBuilder: FormBuilder
+    private dialogRef: MatDialogRef<FormEmployeeComponent>,
+    private formBuilder: FormBuilder,
+    private employeService: EmployeeService
   ) {
-    this.action = data.action;
+    this.type = data.type;
+    this.employee = data.employee;
   }
 
   ngOnInit(): void {
@@ -25,17 +37,47 @@ export class FormEmployeeComponent implements OnInit {
 
   initializeForm() {
     this.form = this.formBuilder.group({
-      name: ['', Validators.required],
-      position: ['', Validators.required],
-      salary: ['', Validators.required],
+      name: [this.employee?.name ?? '', Validators.required],
+      position: [this.employee?.position ?? '', Validators.required],
+      salary: [this.employee?.salary ?? 0, Validators.required],
     });
   }
 
-  onSubmit(event: Event) {
-    event.preventDefault();
+  getError(control: string) {
+    return this.form.controls[control].hasError;
+  }
 
+  getErrorMessage(control: string) {
+    if (this.form.controls[control].hasError('required'))
+      return 'Debe ingresar un valor';
+
+    return 'Campo Invalido';
+  }
+
+  onSubmit() {
     if (this.form.valid) {
-      this.onClose(this.form.value);
+      if (this.type == TypeForm.CREATE) {
+        this.employeService
+          .createEmployee({
+            ...this.form.value,
+            address: { street: '', number: '', postalCode: 0 },
+          })
+          .pipe(tap(console.log))
+          .subscribe((res) => {
+            this.onClose(res);
+          });
+      } else {
+        this.employeService
+          .updateEmployee({
+            id: this.employee.id,
+            ...this.form.value,
+            address: { street: '', number: '', postalCode: 0 },
+          })
+          .pipe(tap(console.log))
+          .subscribe((res) => {
+            this.onClose(res);
+          });
+      }
     }
   }
 

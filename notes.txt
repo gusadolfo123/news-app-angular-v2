@@ -17,3 +17,5 @@ ng g m core
 ng g s core/services/employee
 
 ng g m material/material
+
+ng g c employee/components/form-employee
